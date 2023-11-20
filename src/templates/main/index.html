@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Główna
+{% endblock title %}
+
+
+{% block content %}
+<div class="center">
+    <br/><br/>
+    <h1 style="color:white;font-size:100px;">Witaj na SimpleFB</h1>
+</div>
+
+{% if not request.user.is_authenticated %}
+</br>
+<div class="center">
+    <h2 style="color:white;">Masz już konto?</h2>
+    <a style="color:white;" href="{% url 'account_login' %}" class="ui item">
+        <button class="ui secondary button rel-btn mt-10">
+            Zaloguj się
+        </button>
+    </a>
+    <br/></br>
+    <h2 style="color:white;">Jesteś nowy?</h2>
+    <a style="color:white;"href="{% url 'account_signup' %}" class="ui item">
+        <button class="ui secondary button rel-btn mt-10">
+            Załóż konto
+        </button>
+    </a>
+</div>
+{% endif %}
+
+{% endblock content %}
+
+
+{% block scripts %}
+<script>
+    $(document).ready(function () {
+        console.log('it is working!')
+    })
+</script>
+{% endblock scripts %}
+
+
+
+
+

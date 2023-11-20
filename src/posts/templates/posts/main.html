@@ -1,0 +1,148 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Posty
+{% endblock title %}
+
+{% block content %}
+<div class="ui grid">
+    <div class="eleven wide column">
+        {% for obj in qs %}
+
+        <div class="ui fluid card">
+            <div class="content">
+                <div class="right floated meta">
+                    <div class="ui grid">
+                        <div class="row">
+                            {% if request.user == obj.author.user %}
+                            <a href="{% url 'posts:edit_post' obj.pk %}">
+                                <button class="ui button">Edytuj</button>
+                            </a>
+                            <a href="{% url 'posts:delete_post' obj.pk %}">
+                                <button class="ui button">Usuń</button>
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                </div>
+                <img class="ui avatar image" src={{obj.author.avatar.url}}>
+                {{ obj.author.user }} - {{ obj.created|timesince}} ago
+            </div>
+            <div class="ui fluid image">
+                {% if obj.image %}
+                <img src={{obj.image.url}}>
+                {% endif %}
+            </div>
+            <div class="content">
+                <p> {{ obj.post_content }} </p>
+                <div class="right floated">
+                    <form action="{% url 'posts:like_post_view' %}" method="POST" class='like_form' id='{{obj.id}}'>
+                        {% csrf_token %}
+                        <input type="hidden" name='post_id' value={{obj.id}}>
+                        <button type="submit" class="ui primary button like_btn{{obj.id}} mt-10">
+                            {% if profile not in obj.liked.all %}
+                                Lubię to!
+                            {% else %}
+                                Nie lubię!
+                            {% endif %}
+                        </button>
+                        <i class="thumbs up icon"></i>
+                        <span class="like_count{{obj.id}}">{{obj.likes_count}}</span>
+                    </form>
+                </div>
+                <br>
+                <i class="comment icon"></i>
+                <span> {{ obj.comments_count }} komentarzy</span>
+            </div>
+            <div class="extra content">
+                <div class="mb-5">
+                </div>
+                <button class="cmt_btn ui button mb-5">Wyświetl komentarze</button>
+                <div class="comment-box" id="com_box">
+                    {% if obj.comment_set.all %}
+                    {% for com in obj.comment_set.all %}
+                    <div class="ui segment mb-5">
+                        <img class="ui avatar image" src={{com.user.avatar.url}}>
+                        <span>{{ com.user }}</span>
+                        <div class='mt-10'>{{ com.comment_content }}</div>
+                    </div>
+                    {% endfor %}
+                    {% endif %}
+                </div>
+                <form action="" method="POST" class='ui fluid form'>
+                    {% csrf_token %}
+                    <input type="hidden" name="post_id" value={{obj.id}}>
+                    {{ comment_form }}
+                    <button type="submit" name="submit_comment" class="ui primary button mt-10 w-full">Wyślij</button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="five wide column">
+        <div class="ui segment">
+            {% if post_add_check %}
+            <div class="ui green message">Dodano post</div>
+            {% endif %}
+            <form action="" method="POST" class='ui form' enctype="multipart/form-data">
+                {% csrf_token %}
+                {{post_form}}
+                <button type='submit' name="submit_post" class="ui positive button w-full mt-10">Opublikuj</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block scripts %}
+<script>
+    $(document).ready(function () {
+        let display = false
+        $(".cmt_btn").click(function () {
+            if (display === false) {
+                $(this).next(".comment-box").show("slow");
+                display = true
+            } else {
+                $(this).next(".comment-box").hide("slow");
+                display = false
+            }
+        });
+
+        $('.like_form').submit(function (event){
+            event.preventDefault()
+
+            const post_id = $(this).attr('id')
+            const like_text = $.trim($(`.like_btn${post_id}`).text())
+            const url = $(this).attr('action')
+
+            let res;
+            const like_count_text = parseInt($(`.like_count${post_id}`).text())
+
+
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: {
+                    'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val(),
+                    'post_id': post_id
+                },
+                success: function (response){
+                    if (like_text == 'Nie lubię!'){
+                        $(`.like_btn${post_id}`).text('Lubię to!')
+                        res = like_count_text - 1
+                    } else {
+                        $(`.like_btn${post_id}`).text('Nie lubię!')
+                        res = like_count_text + 1
+                    }
+                    $(`.like_count${post_id}`).text(res)
+                },
+                error: function (response){
+                    console.log('error', response)
+                }
+            })
+        })
+    });
+</script>
+
+{% endblock scripts %}

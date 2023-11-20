@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Wyszukiwanie
+{% endblock title %}
+
+{% block content %}
+{% if searched %}
+<div class="ui segment">
+    <h1>Wyniki wyszukiwania dla {{searched}}</h1>
+</div>
+{% if not found %}
+<div class="ui segment">
+    <h1>Brak wyników</h1>
+</div>
+{% else %}
+
+{% for user in found %}
+<div class="ui segment">
+    <div class="ui grid">
+        <div class="row">
+            <div class="three wide column">
+                <img class="ui small circular image" src={{user.avatar.url}}>
+            </div>
+            <div class="ten wide column">
+                <h3>{{user.user}}</h3>
+                <p>{{user.bio}}</p>
+                <a href={{user.get_absolute_url}}>
+                    <button class="ui primary button mt-10 rel-btn">Zobacz profil</button>
+                </a>
+                <br>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endfor %}
+{% endif %}
+
+{% else %}
+<div class="ui segment">
+    <h1>Brak wyników - nie podano co wyszukać</h1>
+</div>{% endif %}
+
+
+{% endblock content %}

@@ -1,0 +1,58 @@
+{% url 'main_view' as main_path %}
+{% url 'posts:main_post_view' as posts_path %}
+{% url 'profiles:my_profile_view' as my_profile_path %}
+{% url 'profiles:invites_received_view' as my_invites_path %}
+{% url 'profiles:profiles_view' as all_profiles_path %}
+
+<div class="ui inverted menu nav mb-10">
+    <div class="ui container">
+        <a href="{{main_path}}" class="{% if request.path == main_path %}active{% endif %} item">
+            <h3>SimpleFB</h3>
+        </a>
+        {% if request.user.is_authenticated %}
+        <a href="{{posts_path}}" class="{% if request.path == posts_path %}active{% endif %} item">
+            Posty
+        </a>
+        {% endif %}
+        <div class="right menu">
+            {% if request.user.is_authenticated %}
+            <div class="item">
+                <div class="ui floating dropdown icon button teal"> Znajomi
+                    <i class="dropdown icon"></i>
+                    <div class="menu">
+                        <a href="{{all_profiles_path}}" class="{% if request.path == all_profiles_path %}active{% endif %} item">
+                            Wszystkie profile
+                        </a>
+                        <a href="{{my_invites_path}}" class="{% if request.path == my_invites_path %}active{% endif %} item">
+                            Otrzymane zaproszenia &nbsp; <div class="ui green horizontal label">{{invites}}</div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="item">
+                <form class="d-flex" action="{% url 'profiles:search_view' %}" method="POST">
+                    {% csrf_token %}
+                    <div class="ui action left icon input">
+                        <input class="prompt" type="text" name='searched' placeholder="Szukaj znajomych...">
+                        <i class="search icon"></i>
+                        <button type='submit' class="ui button">Szukaj</button>
+                    </div>
+                </form>
+            </div>
+
+            <a href="{{my_profile_path}}" class="{% if request.path == my_profile_path %}active{% endif %} item">
+                <img src={{p_avatar.url}} class="ui avatar image">&nbsp;
+                {{ request.user }}
+            </a>
+
+            <a href="{% url 'account_logout' %}" class="ui item">
+                Wyloguj
+            </a>
+            {% else %}
+            <a href="{% url 'account_login' %}" class="ui item">
+                Zaloguj
+            </a>
+            {% endif %}
+        </div>
+    </div>
+</div>

@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Wszystkie profile
+{% endblock title %}
+
+{% block content %}
+{% if qs_empty %}
+<div class="ui segment">
+    <h1>Brak profili do wyświetlenia</h1>
+</div>
+{% endif %}
+
+{% for obj in object_list %}
+<div class="ui segment">
+    <div class="ui grid">
+        <div class="row">
+            <div class="three wide column">
+                <img class="ui small circular image" src={{obj.avatar.url}}>
+            </div>
+            <div class="ten wide column">
+                <h3>{{obj.user}}</h3>
+                <p>{{obj.bio}}</p>
+                <a href={{obj.get_absolute_url}}><button class="ui primary button mt-10 rel-btn">Zobacz profil</button></a>
+                <br>
+                {% if obj.user not in receiver_list and obj.user not in sender_list %}
+                <form action="{% url 'profiles:send_invite' %}" method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="profile_pk" value={{obj.pk}}>
+                    <button type="submit" class="ui positive basic button mt-10 rel-btn"><i class="plus square icon"></i>Dodaj do
+                        znajomych
+                    </button>
+                </form>
+                {% endif %}
+                {% if obj.user in receiver_list and request.user not in obj.friends.all %}
+                <button class="ui disabled button mt-10 rel-btn"><i class="user icon"></i>Zaproszenie wysłane</button>
+                {% endif %}
+                {% if obj.user in sender_list and request.user not in obj.friends.all %}
+                <button class="ui disabled button mt-10 rel-btn"><i class="question icon"></i>Otrzymano zaproszenie</button>
+                {% endif %}
+                {% if request.user in obj.friends.all %}
+                <form action="{% url 'profiles:remove_friend' %}" method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="profile_pk" value={{obj.pk}}>
+                    <button type="submit" class="ui negative basic button mt-10 rel-btn"><i class="minus square icon"></i>Usuń ze
+                        znajomych
+                    </button>
+                </form>
+                 {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+{% endblock content %}

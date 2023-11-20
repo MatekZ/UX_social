@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Zaproszenia do znajomych
+{% endblock title %}
+
+{% block content %}
+{% if no_inv %}
+<div class="ui segment">
+    <h1>Nie masz żadnych zaproszeń do znajomych :(</h1>
+</div>
+{% endif %}
+
+{% for obj in qs %}
+<div class="ui segment">
+    <div class="ui grid">
+        <div class="row">
+            <div class="three wide column">
+                <img class="ui small circular image" src={{obj.avatar.url}}>
+            </div>
+            <div class="ten wide column">
+                <h3>{{obj.user}}</h3>
+                <p>{{obj.bio}}</p>
+                <a href="">
+                    <button class="ui primary button mt-10 rel-btn">Zobacz profil</button>
+                </a>
+                <form action="{% url 'profiles:accept_invite' %}" method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="profile_pk" value={{obj.pk}}>
+                    <button type="submit" class="ui positive basic button mt-10 rel-btn"><i class="check icon"></i>Akceptuj
+                        zaproszenie
+                    </button>
+                </form>
+                <form action="{% url 'profiles:reject_invite' %}" method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="profile_pk" value={{obj.pk}}>
+                    <button type="submit" class="ui negative basic button mt-10 rel-btn"><i class="close icon"></i>Odrzuć
+                        zaproszenie
+                    </button>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}}
+
+
+{% endblock content %}

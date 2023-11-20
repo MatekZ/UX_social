@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Mój profil
+{% endblock title %}
+
+{% block content %}
+
+<div class="ui modal">
+    <i class="close icon"></i>
+    <div class="header">
+        Aktualizuj profil
+    </div>
+    <div class="image content">
+        <div class="ui medium image">
+            <img src="{{my_profile.avatar.url}}">
+        </div>
+        <div class="description">
+            <div class="ui header">Aktualizowanie profilu</div>
+            <form action="" method="POST" class="ui form" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{form.as_p}}
+
+        </div>
+    </div>
+    <div class="actions">
+        <button type="submit" class="ui positive button">
+            Aktualizuj
+        </button>
+        </form>
+    </div>
+</div>
+
+<div>
+    {% if updated %}
+    <div class="ui green message">Profil został zaktualizowany!</div>
+    {% endif %}
+
+
+    <div class="ui grid">
+        <div class="row">
+            <div class="ui segment">
+                <h3>Profil: {{request.user}}</h3>
+                <div class="six wide column">
+                    <img class="ui medium rounded image mt-10" src="{{my_profile.avatar.url}}">
+                    <div class="row mt-10">
+                        <button class="ui secondary button mt-10 rel-btn" id="show_form">Aktualizuj profil</button>
+                        <br>
+                        <a href="{% url 'account_change_password' %}">
+                            <button class="ui secondary button mt-10 rel-btn" id="show_form">Zmień hasło</button>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="ten wide column">
+                <table class="ui table">
+                    <tbody>
+                    <tr>
+                        <td>Nazwa użytkownika</td>
+                        <td>{{my_profile.user}}</td>
+                    </tr>
+                    <tr>
+                        <td>Imię</td>
+                        <td>{{my_profile.first_name}}</td>
+                    </tr>
+                    <tr>
+                        <td>Nazwisko</td>
+                        <td>{{my_profile.last_name}}</td>
+                    </tr>
+                    <tr>
+                        <td>Opis</td>
+                        <td>{{my_profile.bio}}</td>
+                    </tr>
+                    <tr>
+                        <td>Liczba znajomych</td>
+                        <td>{{my_profile.friends_count}}</td>
+                    </tr>
+                    <tr>
+                        <td>Znajomi</td>
+                        <td>
+                            <ul>
+                                {% for friend in my_profile.get_friends %}
+                                <li>{{friend}}</li>
+                                {% endfor %}
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Liczba postów</td>
+                        <td>{{my_profile.posts_count}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock content %}
+
+

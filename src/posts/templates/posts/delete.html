@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Usuń post
+{% endblock title %}
+
+{% block content %}
+    {% if messages %}
+        {% for message in messages %}
+            {% if 'warning' in message.tags %}
+                <div class="ui negative message">
+                    <div class="header">
+                        {{message}}
+                    </div>
+                </div>
+            {% endif %}
+        {% endfor %}
+    {% else %}
+        <div class="ui segment">
+            <h3>Czy na pewno chcesz usunąć post?</h3>
+            <form action="" method="POST">
+                {% csrf_token %}
+                <button type="submit" class="ui button primary mt-10">USUŃ</button>
+            </form>
+        </div>
+    {% endif %}
+
+{% endblock content %}
