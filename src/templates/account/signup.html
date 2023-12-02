@@ -15,7 +15,18 @@
                 <div class="five wide column">
                     <form class="signup ui form" id="signup_form" method="post" action="{% url 'account_signup' %}">
                         {% csrf_token %}
-                        {{ form.as_p }}
+                        {% for field in form %}
+                        <p>
+                            {% if field.errors %}
+                            <ul class="errorlist">
+                                {% for error in field.errors %}
+                                <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                            {% endif %}
+                             {{ field.label_tag }} {{ field }}
+                        </p>
+                        {% endfor %}
                         {% if redirect_field_value %}
                         <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
                         {% endif %}
