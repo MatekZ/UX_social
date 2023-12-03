@@ -20,6 +20,7 @@ Mój profil
             <form action="" method="POST" class="ui form" enctype="multipart/form-data">
                 {% csrf_token %}
                 {{form.as_p}}
+            </form>
 
         </div>
     </div>
@@ -27,7 +28,6 @@ Mój profil
         <button type="submit" class="ui positive button">
             Aktualizuj
         </button>
-        </form>
     </div>
 </div>
 

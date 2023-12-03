@@ -20,7 +20,7 @@ Wszystkie profile
             </div>
             <div class="ten wide column">
                 <h3>{{obj.user}}</h3>
-                <p>{{obj.bio}}</p>
+                <p><b>Opis:</b> {{obj.bio}}</p>
                 <a href={{obj.get_absolute_url}}><button class="ui primary button mt-10 rel-btn">Zobacz profil</button></a>
                 <br>
                 {% if obj.user not in receiver_list and obj.user not in sender_list %}
