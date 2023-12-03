@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib import messages
 
 
 @login_required
@@ -26,16 +27,26 @@ def my_profile_view(request):
 
     form = ProfileModelForms(request.POST or None, request.FILES or None, instance=my_profile)
     updated = False
+    update_fail = False
 
     if request.method == 'POST':
         if form.is_valid():
             form.save()
             updated = True
+            update_fail = False
+            messages.success(request, 'Hasło zostało zmienione pomyślnie.')
+        else:
+            updated = False
+            update_fail = True
+            messages.error(request, 'Błąd w zmianie hasła. Proszę sprawdzić wprowadzone dane.')
+
+    list(messages.get_messages(request))
 
     context = {
         'my_profile': my_profile,
         'form': form,
         'updated': updated,
+        'update_fail': update_fail,
     }
 
     return render(request, 'profiles/myprofile.html', context)
