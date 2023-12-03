@@ -173,6 +173,23 @@ def send_invite(request):
 
 
 @login_required
+def cancel_invite(request):
+    if request.method == 'POST':
+        pk = request.POST.get('profile_pk')
+        user = request.user
+        sender = Profile.objects.get(user=user)
+        receiver = get_object_or_404(Profile, pk=pk)
+
+        relationship = Relationship.objects.filter(sender=sender, receiver=receiver, status='send').first()
+
+        if relationship:
+            relationship.delete()
+
+        return redirect(request.META.get('HTTP_REFERER'))
+
+    return redirect('profiles:my_profile_view')
+
+@login_required
 def remove_friend(request):
     if request.method == 'POST':
         pk = request.POST.get('profile_pk')
