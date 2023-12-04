@@ -56,3 +56,11 @@ body {
   background-color: #04AA6D;
   color: white;
 }
+
+.modal-description {
+    padding: 20px;
+}
+
+.ui.modal.first {
+    width: 35vw;
+}

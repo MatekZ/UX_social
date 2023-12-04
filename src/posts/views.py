@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from .models import Post, Like
 from profiles.models import Profile
-from .forms import PostModelForm, CommentModelForm
+from .forms import PostModelForm, CommentModelForm, TextPostModelForm
 from django.views.generic import UpdateView, DeleteView
 from django.contrib import messages
 from django.http import JsonResponse
@@ -11,15 +11,17 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 @login_required
-def posts_view(requset):
+def posts_view(request):
     query_set = Post.objects.all()
-    profile = Profile.objects.get(user=requset.user)
+    profile = Profile.objects.get(user=request.user)
     post_form = PostModelForm()
+    text_post_form = TextPostModelForm()
     comment_form = CommentModelForm()
     post_add_check = False
 
-    if 'submit_post' in requset.POST:
-        post_form = PostModelForm(requset.POST, requset.FILES)
+    if 'submit_post' in request.POST:
+        post_form = PostModelForm(request.POST, request.FILES)
+
         if post_form.is_valid():
             instance = post_form.save(commit=False)
             instance.author = profile
@@ -27,14 +29,24 @@ def posts_view(requset):
             post_form = PostModelForm()
             post_add_check = True
 
+    if 'submit_text_post' in request.POST:
+        text_post_form = TextPostModelForm(request.POST)
+
+        if text_post_form.is_valid():
+            instance = text_post_form.save(commit=False)
+            instance.author = profile
+            instance.save()
+            text_post_form = TextPostModelForm()
+            post_add_check = True
 
 
-    if 'submit_comment' in requset.POST:
-        comment_form = CommentModelForm(requset.POST)
+
+    if 'submit_comment' in request.POST:
+        comment_form = CommentModelForm(request.POST)
         if comment_form.is_valid():
             instance = comment_form.save(commit=False)
             instance.user = profile
-            instance.post = Post.objects.get(id=requset.POST.get('post_id'))
+            instance.post = Post.objects.get(id=request.POST.get('post_id'))
             instance.save()
             comment_form = CommentModelForm()
 
@@ -43,11 +55,12 @@ def posts_view(requset):
         'qs': query_set,
         'profile': profile,
         'post_form': post_form,
+        'text_post_form': text_post_form,
         'comment_form': comment_form,
         'post_add_ckeck': post_add_check,
     }
 
-    return render(requset, 'posts/main.html', context)
+    return render(request, 'posts/main.html', context)
 
 @login_required
 def like_view(request):

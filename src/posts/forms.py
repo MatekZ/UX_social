@@ -8,6 +8,12 @@ class PostModelForm(forms.ModelForm):
         model = Post
         fields = ('post_content', 'image')
 
+class TextPostModelForm(forms.ModelForm):
+    post_content = forms.CharField(label='Tekst Posta:', widget=forms.Textarea())
+    class Meta:
+        model = Post
+        fields = ('post_content',)
+
 class CommentModelForm(forms.ModelForm):
     comment_content = forms.CharField(label='', widget=forms.TextInput(attrs={'placeholder': 'Napisz komentarz...'}))
     class Meta:
