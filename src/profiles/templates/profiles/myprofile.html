@@ -20,20 +20,23 @@ Mój profil
             <form action="" method="POST" class="ui form" enctype="multipart/form-data">
                 {% csrf_token %}
                 {{form.as_p}}
+                <div class="actions">
+                    <button type="submit" class="ui positive button">
+                        Aktualizuj
+                    </button>
+                </div>
             </form>
 
         </div>
     </div>
-    <div class="actions">
-        <button type="submit" class="ui positive button">
-            Aktualizuj
-        </button>
-    </div>
+
 </div>
 
 <div>
     {% if updated %}
     <div class="ui green message">Profil został zaktualizowany!</div>
+    {% elif update_fail %}
+    <div class="ui red message">Błąd w aktualizacji profilu!</div>
     {% endif %}
 
 

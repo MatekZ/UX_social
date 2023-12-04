@@ -27,7 +27,7 @@ Posty
 
                 </div>
                 <img class="ui avatar image" src={{obj.author.avatar.url}}>
-                {{ obj.author.user }} - {{ obj.created|timesince}} ago
+                {{ obj.author.user }} - {{ obj.created|date:"j F Y H:i"}}
             </div>
             <div class="ui fluid image">
                 {% if obj.image %}

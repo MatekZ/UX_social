@@ -28,12 +28,17 @@ Wszystkie profile
                     {% csrf_token %}
                     <input type="hidden" name="profile_pk" value={{obj.pk}}>
                     <button type="submit" class="ui positive basic button mt-10 rel-btn"><i class="plus square icon"></i>Dodaj do
-                        znajomych!!!
+                        znajomych
                     </button>
                 </form>
                 {% endif %}
                 {% if obj.user in receiver_list and request.user not in obj.friends.all %}
-                <button class="ui disabled button mt-10 rel-btn"><i class="user icon"></i>Zaproszenie wysłane</button>
+                <form action="{% url 'profiles:cancel_invite' %}" method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="profile_pk" value={{obj.pk}}>
+                    <button type="submit" class="ui negative basic button mt-10 rel-btn"><i class="close icon"></i>Anuluj zaproszenie
+                    </button>
+                </form>
                 {% endif %}
                 {% if obj.user in sender_list and request.user not in obj.friends.all %}
                 <button class="ui disabled button mt-10 rel-btn"><i class="question icon"></i>Otrzymano zaproszenie</button>

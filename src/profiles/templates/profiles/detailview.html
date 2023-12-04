@@ -11,9 +11,9 @@ Profil {{object.user}}
             <div class="three wide column">
                 <img class="ui medium rounded image" src={{object.avatar.url}}>
                 <h1>{{object.user}}</h1>
-                <div class="item">
-                        {{object.bio}}
-                    </div>
+                <div class="item" style="width: 300px;">
+                    {{object.bio}}
+                </div>
                 <div class="ui vertical fluid menu">
                     <div class="item">
                         Ilość postów
@@ -35,10 +35,17 @@ Profil {{object.user}}
                 </form>
                 {% endif %}
                 {% if object.user in receiver_list and request.user not in object.friends.all %}
-                <button class="ui disabled button mt-10 rel-btn"><i class="user icon"></i>Zaproszenie wysłane</button>
+                <form action="{% url 'profiles:cancel_invite' %}" method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="profile_pk" value={{object.pk}}>
+                    <button type="submit" class="ui negative basic button mt-10 rel-btn"><i class="close icon"></i>Anuluj
+                        zaproszenie
+                    </button>
+                </form>
                 {% endif %}
                 {% if object.user in sender_list and request.user not in object.friends.all %}
-                <button class="ui disabled button mt-10 rel-btn"><i class="question icon"></i>Otrzymano zaproszenie</button>
+                <button class="ui disabled button mt-10 rel-btn"><i class="question icon"></i>Otrzymano zaproszenie
+                </button>
                 {% endif %}
                 {% if request.user in object.friends.all %}
                 <form action="{% url 'profiles:remove_friend' %}" method="POST">
@@ -53,20 +60,34 @@ Profil {{object.user}}
 
             </div>
         </div>
-        <div class="ten wide column">
-            {% if posts_ckeck %}
-            {% for post in posts %}
-            <div class="segment ui fluid">
-                {{post.post_content}}
+
+            <div class="ten wide column">
+                {% if posts_ckeck %}
+                {% for post in posts %}
+                <div class="ui fluid card">
+                    <div class="content">
+                        <img class="ui avatar image" src="{{post.author.avatar.url}}">
+                        {{ post.author.user }} - {{ post.created|date:"j F Y H:i"}}
+                    </div>
+                    <div class="ui fluid image">
+                        {% if post.image %}
+                        <img src={{post.image.url}}>
+                        {% endif %}
+                        <br>
+                        <p> {{ post.post_content }} </p>
+                        <br>
+                    </div>
+                </div>
+                {% endfor %}
+                {% else %}
+                <div class="ui segment">
+                    <h1>Ta osoba nie zamieściła jeszcze żadnych postów...</h1>
+                </div>
+                {% endif %}
             </div>
-            {% endfor %}
-            {% else %}
-            <div class="ui segment">
-                <h1>Ta osoba nie zamieściła jeszcze żadnych postów...</h1>
-            </div>
-            {% endif %}
         </div>
     </div>
-</div>
+
+
 
 {% endblock content %}
