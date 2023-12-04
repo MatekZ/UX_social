@@ -8,6 +8,7 @@ from django.contrib import messages
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.files.storage import default_storage
 
 
 @login_required
@@ -21,8 +22,9 @@ def posts_view(request):
 
     if 'submit_post' in request.POST:
         post_form = PostModelForm(request.POST, request.FILES)
-
         if post_form.is_valid():
+            file = request.FILES['image']
+            default_storage.save(file.name, file)
             instance = post_form.save(commit=False)
             instance.author = profile
             instance.save()
