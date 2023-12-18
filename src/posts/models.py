@@ -5,7 +5,7 @@ from profiles.models import Profile
 
 class Post(models.Model):
     post_content = models.TextField()
-    image = models.ImageField(upload_to='posts', blank=True, validators=[FileExtensionValidator(['png', 'jpg', 'jpeg'])])
+    image = models.ImageField(upload_to='media/posts/', blank=True, validators=[FileExtensionValidator(['png', 'jpg', 'jpeg'])])
     liked = models.ManyToManyField(Profile, blank=True, related_name='likes')
     updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)

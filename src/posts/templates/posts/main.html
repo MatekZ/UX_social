@@ -5,6 +5,38 @@ Posty
 {% endblock title %}
 
 {% block content %}
+<div class="ui coupled first modal">
+      <div class="header">Jakiego posta chcesz stworzyć?</div>
+      <div class="actions">
+        <div class="ui text-post button">Post Tekstowy</div>
+        <div class="ui image-post button">Post ze zdjęciem</div>
+      </div>
+    </div>
+<div class="ui coupled second modal">
+    <div class="header">O czym chcesz napisać?</div>
+      <div class="modal-description">
+          <form action="" method="POST" class="ui form" enctype="multipart/form-data">
+          {% csrf_token %}
+          {{text_post_form.as_p}}
+          <div class="actions">
+              <button type='submit' name="submit_text_post" class="ui positive button w-full mt-10">Opublikuj</button>
+          </div>
+        </form>
+      </div>
+    </div>
+<div class="ui coupled third modal">
+    <div class="header">Czym chcesz się podzielić?</div>
+    <div class="modal-description">
+        <form action="" method="POST" class="ui form" enctype="multipart/form-data">
+          {% csrf_token %}
+          {{post_form.as_p}}
+          <div class="actions">
+              <button type='submit' name="submit_post" class="ui positive button w-full mt-10">Opublikuj</button>
+          </div>
+        </form>
+    </div>
+</div>
+
 <div class="ui grid">
     <div class="eleven wide column">
         {% for obj in qs %}
@@ -81,15 +113,19 @@ Posty
         {% endfor %}
     </div>
     <div class="five wide column">
+<!--        <div class="ui segment">-->
+<!--            {% if post_add_check %}-->
+<!--            <div class="ui green message">Dodano post</div>-->
+<!--            {% endif %}-->
+<!--            <form action="" method="POST" class='ui form' enctype="multipart/form-data">-->
+<!--                {% csrf_token %}-->
+<!--                {{post_form}}-->
+<!--                <button type='submit' name="submit_post" class="ui positive button w-full mt-10">Opublikuj</button>-->
+<!--            </form>-->
+<!--        </div>-->
+
         <div class="ui segment">
-            {% if post_add_check %}
-            <div class="ui green message">Dodano post</div>
-            {% endif %}
-            <form action="" method="POST" class='ui form' enctype="multipart/form-data">
-                {% csrf_token %}
-                {{post_form}}
-                <button type='submit' name="submit_post" class="ui positive button w-full mt-10">Opublikuj</button>
-            </form>
+            <button class="ui secondary button mt-10 rel-btn" id="show_post_form">Stwórz Post</button>
         </div>
     </div>
 </div>
