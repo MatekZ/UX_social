@@ -49,6 +49,7 @@ def posts_view(requset):
 
     return render(requset, 'posts/main.html', context)
 
+
 @login_required
 def like_view(request):
     user = request.user
@@ -72,8 +73,8 @@ def like_view(request):
         else:
             like.value = 'Like'
 
-            post_obj.save()
-            like.save()
+        post_obj.save()
+        like.save()
 
         data = {
             'value': like.value,
@@ -82,6 +83,12 @@ def like_view(request):
         return JsonResponse(data, safe=False)
 
     return redirect('posts:main_post_view')
+
+
+def get_like_value(user, post):
+    like_data = Like.objects.filter(user=user, post=post).first()
+    return like_data.value if like_data else None
+
 
 class PostDeleteView(LoginRequiredMixin, DeleteView):
     model = Post
