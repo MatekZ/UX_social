@@ -28,6 +28,54 @@ Główna
         </button>
     </a>
 </div>
+{% else %}
+<div style="margin-top: 5%">
+    <p class="paragraph">
+        Witaj użytkowniku! Ta strona ma ci pomóc odnaleźć się na SimpleFB! Jeśli czujesz że nie potrzebujesz tego poradnika,
+        lub chcesz odkryć opcje strony samodzielnie, to naciśnij na przycisk "Posty" na górze ekranu. Możesz zawsze tu wrócić,
+        naciskając na SimpleFB na górze.
+    </p>
+    <h2 style="color: white">Górny pasek:</h2>
+    <p class="paragraph">
+        Skoro czytasz dalej, to przejdźmy przez resztę górnego paska sterowania:
+    </p>
+    <img class="image_border" src="media/static_images/bar.png">
+    <p class="paragraph">
+        Wspomnieliśmy już o dwóch pierwszych przyciskach, idąc dalej w prawo jest opcja "Znajomi", jest to rozwijane okienko z dwiema opcjami.
+        Pierwsza: "Wszystkie profile" przeniesie cię na stronę z listą wszystkich osób na stronie, druga zaś przeniesie do wszystkich otrzymanych zaproszeń do znajomych.
+
+        Obok jest wyszukiwarka osób, znajduje ona użytkowników SimpleFB po nazwach jakie sobie nadali.
+        <br>
+        Ostatnim przyciskiem na pasku jest przejście do własnego konta, oznaczony on bedzie naszą nazwą użytkownika i zdjęciem profilowym.
+    </p>
+    <h2 style="color: white">Posty:</h2>
+    <p class="paragraph">
+        Pod zakładką postów kryje się główna strona aplikacji, wyświetlają się tam posty i przemyślenia użytkowników.
+        Pojedyńczy post wygląda tak:
+    </p>
+    <img src="media/static_images/post.png">
+    <p class="paragraph">
+        Idąc od góry, każdy z post składa się z:<br>
+        &emsp;-Autora, przedstawionego jego nazwą użytkownika i zdjęciem, wraz z datą publikacji;<br>
+        &emsp;-Treści posta, zawiera ona zawsze tekst ale może też mieć dołączone zdjęcie;<br>
+        &emsp;-Liczników komentarzy do posta i jego polubień przez użytkowników oraz przycisk do pozostawienia własnego polubienia;<br>
+        &emsp;-Komentarzy.<br>
+    </p>
+    <p class="paragraph">
+        Na stronie postów można publikować własne posty, narzędzia do tego znajdują się po prawej stronie od listy postów.
+    </p>
+    <h2 style="color: white">Wyszukiwanie osób:</h2>
+    <p class="paragraph">
+        Jeśli wyszukamy jakiegoś użytkownika, lub wejdziemy w listę wszystkich, wyniki będą przedstawione w liście składającej się
+        z takich elementów:
+    </p>
+    <img src="media/static_images/wyszukiwane_konto.png">
+    <p class="paragraph" style="padding-bottom: 50px">
+        Przedstawiają one konta osób. Mają nazwę konta, wraz ze zdjęciem oraz opis jaki użytkownik sobie ustawił.
+        Przyciski pozwalają nam przejść do konta danej osoby, a dolny wysłać zaproszenie do znajomych.
+    </p>
+</div>
+
 {% endif %}
 
 {% endblock content %}
