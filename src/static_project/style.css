@@ -64,3 +64,14 @@ body {
 .ui.modal.first {
     width: 35vw;
 }
+
+.paragraph {
+    color: white;
+    font-size: 20px;
+    text-align: justify;
+    text-justify: inter-word;
+}
+
+.image_border {
+    border: 2px solid black;
+}
