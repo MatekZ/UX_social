@@ -2,53 +2,39 @@ from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from .models import Post, Like
 from profiles.models import Profile
-from .forms import PostModelForm, CommentModelForm, TextPostModelForm
+from .forms import PostModelForm, CommentModelForm
 from django.views.generic import UpdateView, DeleteView
 from django.contrib import messages
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.core.files.storage import default_storage
 
 
 @login_required
-def posts_view(request):
+def posts_view(requset):
     query_set = Post.objects.all()
-    profile = Profile.objects.get(user=request.user)
+    profile = Profile.objects.get(user=requset.user)
     post_form = PostModelForm()
-    text_post_form = TextPostModelForm()
     comment_form = CommentModelForm()
     post_add_check = False
 
-    if 'submit_post' in request.POST:
-        post_form = PostModelForm(request.POST, request.FILES)
+    if 'submit_post' in requset.POST:
+        post_form = PostModelForm(requset.POST, requset.FILES)
         if post_form.is_valid():
-            file = request.FILES['image']
-            default_storage.save(file.name, file)
             instance = post_form.save(commit=False)
             instance.author = profile
             instance.save()
             post_form = PostModelForm()
             post_add_check = True
 
-    if 'submit_text_post' in request.POST:
-        text_post_form = TextPostModelForm(request.POST)
-
-        if text_post_form.is_valid():
-            instance = text_post_form.save(commit=False)
-            instance.author = profile
-            instance.save()
-            text_post_form = TextPostModelForm()
-            post_add_check = True
 
 
-
-    if 'submit_comment' in request.POST:
-        comment_form = CommentModelForm(request.POST)
+    if 'submit_comment' in requset.POST:
+        comment_form = CommentModelForm(requset.POST)
         if comment_form.is_valid():
             instance = comment_form.save(commit=False)
             instance.user = profile
-            instance.post = Post.objects.get(id=request.POST.get('post_id'))
+            instance.post = Post.objects.get(id=requset.POST.get('post_id'))
             instance.save()
             comment_form = CommentModelForm()
 
@@ -57,12 +43,12 @@ def posts_view(request):
         'qs': query_set,
         'profile': profile,
         'post_form': post_form,
-        'text_post_form': text_post_form,
         'comment_form': comment_form,
         'post_add_ckeck': post_add_check,
     }
 
-    return render(request, 'posts/main.html', context)
+    return render(requset, 'posts/main.html', context)
+
 
 @login_required
 def like_view(request):
@@ -87,8 +73,8 @@ def like_view(request):
         else:
             like.value = 'Like'
 
-            post_obj.save()
-            like.save()
+        post_obj.save()
+        like.save()
 
         data = {
             'value': like.value,
@@ -97,6 +83,12 @@ def like_view(request):
         return JsonResponse(data, safe=False)
 
     return redirect('posts:main_post_view')
+
+
+def get_like_value(user, post):
+    like_data = Like.objects.filter(user=user, post=post).first()
+    return like_data.value if like_data else None
+
 
 class PostDeleteView(LoginRequiredMixin, DeleteView):
     model = Post
@@ -126,4 +118,3 @@ class PostEditView(LoginRequiredMixin, UpdateView):
         else:
             form.add_error(None, 'Błąd w edytowaniu posta. Nie jesteś jego autorem!')
             return super().form_valid(form)
-
