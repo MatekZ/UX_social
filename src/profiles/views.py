@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Profile, Relationship
+from posts.models import Post
 from .forms import ProfileModelForms
+from posts.forms import CommentModelForm
 from django.views.generic import ListView, DetailView
 from django.contrib.auth.models import User
 from django.db.models import Q
@@ -121,6 +123,7 @@ class ProfilesDetailView(LoginRequiredMixin, DetailView):
         relation_sender = Relationship.objects.filter(receiver=profile)
         receiver_list = []
         sender_list = []
+        comment_form = CommentModelForm()
 
         for item in relation_receiver:
             receiver_list.append(item.receiver.user)
@@ -132,6 +135,7 @@ class ProfilesDetailView(LoginRequiredMixin, DetailView):
         context["sender_list"] = sender_list
         context["posts"] = self.get_object().get_posts()
         context["posts_ckeck"] = True if len(self.get_object().get_posts()) > 0 else False
+        context["comment_form"] = comment_form
 
         return context
 
@@ -167,6 +171,25 @@ class ProfilesView(LoginRequiredMixin, ListView):
             context["qs_empty"] = True
 
         return context
+
+# def profile_comment(request):
+#     # query_set = Post.objects.all()
+#     # post_form = PostModelForm()
+#     # comment_form = CommentModelForm()
+#     # post_add_check = False
+#
+#     profile = Profile.objects.get(user=request.user)
+#
+#     if 'submit_comment' in request.POST:
+#         comment_form = CommentModelForm(request.POST)
+#         if comment_form.is_valid():
+#             instance = comment_form.save(commit=False)
+#             instance.user = profile
+#             instance.post = Post.objects.get(id=request.POST.get('post_id'))
+#             instance.save()
+#         return redirect(request.META.get('HTTP_REFERER'))
+#
+#     return redirect('profiles:my_profile_view')
 
 
 @login_required

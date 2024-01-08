@@ -4,90 +4,208 @@
 Profil {{object.user}}
 {% endblock title %}
 
+
 {% block content %}
-<div class="ui grid">
-    <div class="row">
-        <div class="ui segment">
-            <div class="three wide column">
-                <img class="ui medium rounded image" src={{object.avatar.url}}>
-                <h1>{{object.user}}</h1>
-                <div class="item" style="width: 300px;">
-                    {{object.bio}}
-                </div>
-                <div class="ui vertical fluid menu">
-                    <div class="item">
-                        Ilość postów
-                        <div class="ui black label">{{object.posts_count}}</div>
-                    </div>
-                    <div class="item">
-                        Znajomi
-                        <div class="ui black label">{{object.friends_count}}</div>
-                    </div>
-                </div>
-                {% if object.user not in receiver_list and object.user not in sender_list %}
-                <form action="{% url 'profiles:send_invite' %}" method="POST">
-                    {% csrf_token %}
-                    <input type="hidden" name="profile_pk" value={{object.pk}}>
-                    <button type="submit" class="ui positive basic button mt-10 rel-btn"><i
-                            class="plus square icon"></i>Dodaj do
-                        znajomych
-                    </button>
-                </form>
-                {% endif %}
-                {% if object.user in receiver_list and request.user not in object.friends.all %}
-                <form action="{% url 'profiles:cancel_invite' %}" method="POST">
-                    {% csrf_token %}
-                    <input type="hidden" name="profile_pk" value={{object.pk}}>
-                    <button type="submit" class="ui negative basic button mt-10 rel-btn"><i class="close icon"></i>Anuluj
-                        zaproszenie
-                    </button>
-                </form>
-                {% endif %}
-                {% if object.user in sender_list and request.user not in object.friends.all %}
-                <button class="ui disabled button mt-10 rel-btn"><i class="question icon"></i>Otrzymano zaproszenie
-                </button>
-                {% endif %}
-                {% if request.user in object.friends.all %}
-                <form action="{% url 'profiles:remove_friend' %}" method="POST">
-                    {% csrf_token %}
-                    <input type="hidden" name="profile_pk" value={{object.pk}}>
-                    <button type="submit" class="ui negative basic button mt-10 rel-btn"><i
-                            class="minus square icon"></i>Usuń ze
-                        znajomych
-                    </button>
-                </form>
-                {% endif %}
 
-            </div>
+<div class="ui modal">
+    <i class="close icon"></i>
+    <div class="ui fluid card">
+        {% for post in posts %}
+
+        <div class="header">
+            <img class="ui avatar image" src="{{post.author.avatar.url}}">
+            {{ post.author.user }} - {{ post.created|date:"j F Y H:i"}}
         </div>
+        <div class="ui fluid image">
+            {% if post.image %}
+            <img src={{post.image.url}}>
+            {% endif %}
+        </div>
+        <br>
+        <div class="content">
+        <p style="padding: 10px;"> {{ post.post_content }} </p>
+        <br>
 
-            <div class="ten wide column">
-                {% if posts_ckeck %}
-                {% for post in posts %}
-                <div class="ui fluid card">
-                    <div class="content">
-                        <img class="ui avatar image" src="{{post.author.avatar.url}}">
-                        {{ post.author.user }} - {{ post.created|date:"j F Y H:i"}}
-                    </div>
-                    <div class="ui fluid image">
-                        {% if post.image %}
-                        <img src={{post.image.url}}>
-                        {% endif %}
-                        <br>
-                        <p> {{ post.post_content }} </p>
-                        <br>
-                    </div>
+        <div class="right floated">
+            <form action="{% url 'posts:like_post_view' %}" method="POST" class='like_form' id='{{post.id}}'>
+                {% csrf_token %}
+                <input type="hidden" name='post_id' value={{post.id}}>
+                <button type="submit" class="ui primary button like_btn{{post.id}} mt-10">
+                    {% if profile not in post.liked.all %}
+                    Lubię to!
+                    {% else %}
+                    Nie lubię!
+                    {% endif %}
+                </button>
+                <i class="thumbs up icon"></i>
+                <span class="like_count{{post.id}}">{{post.likes_count}}</span>
+            </form>
+        </div>
+        <br>
+        </div>
+        <div class="extra content">
+            <div class="mb-5">
+            </div>
+            <button class="cmt_btn ui button mb-5">
+                <i class="comment icon"></i>
+                <span> {{ post.comments_count }} komentarzy</span>
+            </button>
+            <div class="comment-box" id="com_box">
+                {% if post.comment_set.all %}
+                {% for com in post.comment_set.all %}
+                <div class="ui segment mb-5">
+                    <img class="ui avatar image" src={{com.user.avatar.url}}>
+                    <span>{{ com.user }}</span>
+                    <div class='mt-10'>{{ com.comment_content }}</div>
                 </div>
                 {% endfor %}
-                {% else %}
-                <div class="ui segment">
-                    <h1>Ta osoba nie zamieściła jeszcze żadnych postów...</h1>
-                </div>
                 {% endif %}
+            </div>
+            <form action="{% url 'posts:main_post_view' %}" method="POST" class='ui fluid form'>
+                {% csrf_token %}
+                <input type="hidden" name="post_id" value={{post.id}}>
+                <input type="hidden" name="post_author" value="{{post.author}}">
+                {{ comment_form }}
+                <button type="submit" name="submit_comment" class="ui primary button mt-10 w-full">Wyślij</button>
+            </form>
+            <br><br><br><br><br><br>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+    <div class="ui grid">
+        <div class="row center aligned">
+            <div class="ui segment" style="width: 75%; margin: 0 auto;">
+                <div class="ui stackable grid">
+                    <!--                <div class="twelve wide column">-->
+                    <img class="ui medium rounded image img_center" style="width:100%; padding-top: 10px;"
+                         src={{object.avatar.url}}>
+                    <h1 style="width: 100%;">{{object.user}}</h1>
+                    <div class="ui " style="width: 100%;">
+                        {{object.bio}}
+                    </div>
+                    <div class="ui vertical fluid menu">
+                        <div class="item">
+                            Ilość postów
+                            <div class="ui black label">{{object.posts_count}}</div>
+                        </div>
+                        <div class="item">
+                            Znajomi
+                            <div class="ui black label">{{object.friends_count}}</div>
+                        </div>
+                    </div>
+                    <div class="ui " style="width: 100%;">
+                        {% if object.user not in receiver_list and object.user not in sender_list %}
+                        <div class="div_right" style="padding-bottom: 10px">
+                            <form action="{% url 'profiles:send_invite' %}" method="POST">
+                                {% csrf_token %}
+                                <input type="hidden" name="profile_pk" value={{object.pk}}>
+                                <button type="submit" class="ui positive basic button mt-10 rel-btn">
+                                    <i class="plus square icon"></i>Dodaj do znajomych
+                                </button>
+                            </form>
+                        </div>
+                        {% endif %}
+                        {% if object.user in receiver_list and request.user not in object.friends.all %}
+                        <div class="div_right" style="padding-bottom: 10px">
+                            <form action="{% url 'profiles:cancel_invite' %}" method="POST">
+                                {% csrf_token %}
+                                <input type="hidden" name="profile_pk" value={{object.pk}}>
+                                <button type="submit" class="ui negative basic button mt-10 rel-btn">
+                                    <i class="close icon"></i>Anuluj zaproszenie
+                                </button>
+                            </form>
+                        </div>
+                        {% endif %}
+                        {% if object.user in sender_list and request.user not in object.friends.all %}
+                        <div class="div_right" style="padding-bottom: 10px">
+                            <button class="ui disabled button mt-10 rel-btn">
+                                <i class="question icon"></i>Otrzymano zaproszenie
+                            </button>
+                        </div>
+                        {% endif %}
+                        {% if request.user in object.friends.all %}
+                        <div class="div_right" style="padding-bottom: 10px">
+                            <form action="{% url 'profiles:remove_friend' %}" method="POST">
+                                {% csrf_token %}
+                                <input type="hidden" name="profile_pk" value={{object.pk}}>
+                                <button type="submit" class="ui negative basic button mt-10 rel-btn">
+                                    <i class="minus square icon"></i>Usuń ze znajomych
+                                </button>
+                            </form>
+                        </div>
+                        {% endif %}
+                        {% if posts_ckeck %}
+                        <button class="ui button mt-10 rel-btn div_left" style="padding-bot: 10px;" id="show_form">
+                            Pokaż posty użytkownika
+                        </button>
+                    </div>
+
+                    {% else %}
+                    <div class="ui segment">
+                        <h1>Ta osoba nie zamieściła jeszcze żadnych postów...</h1>
+                    </div>
+                    {% endif %}
+
+                </div>
             </div>
         </div>
     </div>
 
 
+    {% endblock content %}
 
-{% endblock content %}
+    {% block scripts %}
+
+
+    <script>
+        $(document).ready(function () {
+            let display = false
+            $(".cmt_btn").click(function () {
+                if (display === false) {
+                    $(this).next(".comment-box").show("slow");
+                    display = true
+                } else {
+                    $(this).next(".comment-box").hide("slow");
+                    display = false
+                }
+            });
+
+            $('.like_form').submit(function (event) {
+                event.preventDefault()
+
+                const post_id = $(this).attr('id')
+                const like_text = $.trim($(`.like_btn${post_id}`).text())
+                const url = $(this).attr('action')
+
+                let res;
+                const like_count_text = parseInt($(`.like_count${post_id}`).text())
+
+
+                $.ajax({
+                    type: 'POST',
+                    url: url,
+                    data: {
+                        'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val(),
+                        'post_id': post_id
+                    },
+                    success: function (response) {
+                        if (like_text == 'Nie lubię!') {
+                            $(`.like_btn${post_id}`).text('Lubię to!')
+                            res = like_count_text - 1
+                        } else {
+                            $(`.like_btn${post_id}`).text('Nie lubię!')
+                            res = like_count_text + 1
+                        }
+                        $(`.like_count${post_id}`).text(res)
+                    },
+                    error: function (response) {
+                        console.log('error', response)
+                    }
+                })
+            })
+        });
+    </script>
+
+    {% endblock scripts %}
