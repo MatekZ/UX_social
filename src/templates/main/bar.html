@@ -4,27 +4,62 @@
 {% url 'profiles:invites_received_view' as my_invites_path %}
 {% url 'profiles:profiles_view' as all_profiles_path %}
 
+<style>
+.tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 120px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+
+  /* Position the tooltip */
+  position: absolute;
+  z-index: 1;
+  top: 100%; /* Set top to 100% to position the tooltip below the parent element */
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+}
+</style>
+
+
 <div class="ui inverted menu nav mb-10">
     <div class="ui container">
         <a href="{{main_path}}" class="{% if request.path == main_path %}active{% endif %} item">
-            <h3>SimpleFB</h3>
+            <h3 class="tooltip">SimpleFB
+                <span class="tooltiptext">Strona główna - tu znajdziesz przydatne informacje na start.</span>
+            </h3>
         </a>
         {% if request.user.is_authenticated %}
         <a href="{{posts_path}}" class="{% if request.path == posts_path %}active{% endif %} item">
-            Posty
+            <div class="tooltip">Posty
+                <span class="tooltiptext">Tu znajdziesz wszystkie treści zamieszczane przez innych użytkowników. Możesz wchodzić z nimi w interakcję zostawiając polubienia i komentarze.</span>
+            </div>
         </a>
         {% endif %}
         <div class="right menu">
             {% if request.user.is_authenticated %}
             <div class="item">
-                <div class="ui floating dropdown icon button teal"> Znajomi
+                <div class="ui floating dropdown icon button teal tooltip"> Znajomi
+                    <span class="tooltiptext">Lista wszystkich użytkowników oraz miejsce zarządzania zaproszeniami.</span>
                     <i class="dropdown icon"></i>
                     <div class="menu">
-                        <a href="{{all_profiles_path}}" class="{% if request.path == all_profiles_path %}active{% endif %} item">
+                        <a href="{{all_profiles_path}}"
+                           class="{% if request.path == all_profiles_path %}active{% endif %} item">
                             Wszystkie profile
                         </a>
-                        <a href="{{my_invites_path}}" class="{% if request.path == my_invites_path %}active{% endif %} item">
-                            Otrzymane zaproszenia &nbsp; <div class="ui green horizontal label">{{invites}}</div>
+                        <a href="{{my_invites_path}}"
+                           class="{% if request.path == my_invites_path %}active{% endif %} item">
+                            Otrzymane zaproszenia &nbsp;
+                            <div class="ui green horizontal label">{{invites}}</div>
                         </a>
                     </div>
                 </div>
@@ -32,7 +67,8 @@
             <div class="item">
                 <form class="d-flex" action="{% url 'profiles:search_view' %}" method="POST">
                     {% csrf_token %}
-                    <div class="ui action left icon input">
+                    <div class="ui action left icon input tooltip">
+                        <span class="tooltiptext">Możesz wyszukać znajomych wpisując ich nazwę (wystarczy tylko fragment).</span>
                         <input class="prompt" type="text" name='searched' placeholder="Szukaj znajomych...">
                         <i class="search icon"></i>
                         <button type='submit' class="ui button">Szukaj</button>
@@ -40,7 +76,8 @@
                 </form>
             </div>
 
-            <a href="{{my_profile_path}}" class="{% if request.path == my_profile_path %}active{% endif %} item">
+            <a href="{{my_profile_path}}" class="{% if request.path == my_profile_path %}active{% endif %} item tooltip">
+                <span class="tooltiptext">Odwiedź swój profil - edytuj dane takie jak Imię, Nazwisko, hasło i inne oraz przeglądaj udostępnione treści .</span>
                 <img src={{p_avatar.url}} class="ui avatar image">&nbsp;
                 {{ request.user }}
             </a>
